@@ -2,7 +2,24 @@
 
 PrepPal is a disaster awareness and emergency-support web application that helps individuals make informed decisions before and during natural disasters. The platform provides real-time hazard visualization along with an AI-powered object detection system that helps users determine what items to take during evacuation and how those items can be used for basic survival or first aid.
 
+
+## Screenshots
+
+<div align="center">
+
+### 🌍 Global Hazard Map  
+<img src="assets/globe.png" width="80%" alt="Disaster Map">
+
+*Shows real-time natural disasters, hazard radius, earthquake data, etc.*
+
 ---
+
+### 🧰 First-Aid Object Detection  
+<img src="assets/objects.png" width="80%" alt="Object Detection">
+
+*AI-assisted detection of everyday items with survival & first-aid use cases.*
+</div>
+
 
 ## Features
 
@@ -23,7 +40,6 @@ PrepPal is a disaster awareness and emergency-support web application that helps
   - Offers clear, step-by-step instructions written for stressful, time-sensitive situations
   - Covers topics such as wound care, shelter improvisation, tool usage, and signaling for help
 
----
 
 ## Tech Stack
 
