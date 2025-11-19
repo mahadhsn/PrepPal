@@ -9,20 +9,31 @@ import { Label } from '@/components/ui/label'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-type ApiBox = { box:{x0:number;y0:number;x1:number;y1:number}; label:string; score:number }
+type Priority = 'green' | 'orange' | 'red'
+
+type Box = {
+  id: string
+  box: { x0: number; y0: number; x1: number; y1: number }
+  label: string
+  score: number
+  priority: Priority
+}
 
 export default function UploadPage() {
   const [img, setImg] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
-  const [boxes, setBoxes] = useState<{ id:string; box:ApiBox['box']; label:string; score:number }[]>([])
-  const [findings, setFindings] = useState<any[]>([])
-  const [unboxed, setUnboxed] = useState<{ key?: string; label: string; confidence: number; priority: 'green' | 'orange' | 'red' }[]>([])
-  const [busy, setBusy] = useState(false)
 
+  const [boxes, setBoxes] = useState<Box[]>([])
+
+  const [findings, setFindings] = useState<any[]>([])
+  const [unboxed, setUnboxed] = useState<
+    { key?: string; label: string; confidence: number; priority: Priority }[]
+  >([])
+
+  const [busy, setBusy] = useState(false)
   const [ocrText, setOcrText] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
   const [chatReply, setChatReply] = useState<string | null>(null)
-
   const [lastChatKey, setLastChatKey] = useState<string | null>(null)
 
   const [freeText, setFreeText] = useState('')
@@ -36,8 +47,9 @@ export default function UploadPage() {
     setImg(null)
     setChatReply(null)
     setOcrText('')
-    setLastChatKey(null) 
+    setLastChatKey(null)
     setFile(f)
+
     const reader = new FileReader()
     reader.onload = () => setImg(reader.result as string)
     reader.readAsDataURL(f)
@@ -49,16 +61,19 @@ export default function UploadPage() {
     try {
       const fd = new FormData()
       fd.append('file', file)
+
       const res = await fetch('/api/detect', { method: 'POST', body: fd })
       const json = await res.json()
       if (!json.ok) throw new Error(json.error || 'detect failed')
-      setBoxes(json.boxes.map((b:ApiBox, i:number) => ({ id: `b${i}`, ...b })))
+
+      setBoxes(json.boxes as Box[])
+
       setFindings(json.findings || [])
       setUnboxed(json.unboxed || [])
       setOcrText(json.ocrText ?? '')
       setChatReply(null)
-      setLastChatKey(null) 
-    } catch (e:any) {
+      setLastChatKey(null)
+    } catch (e: any) {
       alert(e.message || 'Detection error')
     } finally {
       setBusy(false)
@@ -71,6 +86,7 @@ export default function UploadPage() {
       (boxes && boxes.length > 0) ||
       (unboxed && unboxed.length > 0) ||
       (findings && findings.length > 0)
+
     if (!hasData || chatLoading) return
 
     const key = JSON.stringify({
@@ -79,22 +95,26 @@ export default function UploadPage() {
       u: unboxed.map(u => u.label),
       f: findings.length
     })
-    if (key === lastChatKey) return
 
+    if (key === lastChatKey) return
     setLastChatKey(key)
+
     ;(async () => {
       try {
         setChatLoading(true)
         setChatReply(null)
+
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ocrText, boxes, findings, unboxed }),
         })
+
         const data = await res.json()
         if (!data.ok) throw new Error(data.error || 'Chat failed')
+
         setChatReply(data.reply)
-      } catch (err:any) {
+      } catch (err: any) {
         setChatReply(`(Error) ${err.message || 'Chat failed'}`)
       } finally {
         setChatLoading(false)
@@ -113,8 +133,12 @@ export default function UploadPage() {
           <CardContent className="space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="file">Image</Label>
-              <Input id="file" type="file" accept="image/*"
-                onChange={e => e.target.files?.[0] && onFile(e.target.files[0])}/>
+              <Input
+                id="file"
+                type="file"
+                accept="image/*"
+                onChange={e => e.target.files?.[0] && onFile(e.target.files[0])}
+              />
             </div>
             <Button onClick={detect} disabled={!file || busy}>
               {busy ? 'Detecting…' : 'Detect first-aid items'}
@@ -126,13 +150,14 @@ export default function UploadPage() {
           <Card>
             <CardHeader><CardTitle>Results</CardTitle></CardHeader>
             <CardContent className="space-y-4">
+
               <div className="flex justify-center items-center">
                 <div className="w-full h-auto max-w-[90%] md:max-w-[70%]">
                   <ImageAnnotator src={img} boxes={boxes} />
                 </div>
               </div>
 
-              {/* Also-detected items without boxes (from OCR/LABEL_DETECTION) */}
+              {/* Unboxed */}
               {unboxed.length > 0 && (
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Also detected (no box):</div>
@@ -163,15 +188,7 @@ export default function UploadPage() {
                 </div>
               )}
 
-              {!!findings.length && (
-                <ul className="text-sm text-neutral-700 list-disc pl-5">
-                  {findings.map((f, i) => (
-                    <li key={i}><b>{f.label}</b> — confidence {(f.score*100).toFixed(0)}% (evidence: {f.evidence.join(', ')})</li>
-                  ))}
-                </ul>
-              )}
-
-              {/* Chatbot output (auto-generated) */}
+              {/* Chatbot output */}
               <div className="mt-6 border-t pt-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-neutral-600">
@@ -179,10 +196,7 @@ export default function UploadPage() {
                   </span>
                 </div>
                 {chatReply && (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    className="prose prose-sm mt-3"
-                  >
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-sm mt-3">
                     {chatReply}
                   </ReactMarkdown>
                 )}
@@ -191,6 +205,7 @@ export default function UploadPage() {
           </Card>
         )}
 
+        {/* Free text chat */}
         <Card>
           <CardHeader><CardTitle>Chat without image</CardTitle></CardHeader>
           <CardContent className="space-y-3">
@@ -211,6 +226,7 @@ export default function UploadPage() {
                   try {
                     setFreeChatLoading(true)
                     setFreeChatReply(null)
+
                     const res = await fetch('/api/chat', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
@@ -221,10 +237,11 @@ export default function UploadPage() {
                         unboxed: [],
                       }),
                     })
+
                     const data = await res.json()
                     if (!data.ok) throw new Error(data.error || 'Chat failed')
                     setFreeChatReply(data.reply)
-                  } catch (err:any) {
+                  } catch (err: any) {
                     setFreeChatReply(`(Error) ${err.message || 'Chat failed'}`)
                   } finally {
                     setFreeChatLoading(false)
@@ -234,11 +251,9 @@ export default function UploadPage() {
                 {freeChatLoading ? 'Thinking…' : 'Generate survival tips'}
               </Button>
             </div>
+
             {freeChatReply && (
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                className="prose prose-sm mt-2"
-              >
+              <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-sm mt-2">
                 {freeChatReply}
               </ReactMarkdown>
             )}
