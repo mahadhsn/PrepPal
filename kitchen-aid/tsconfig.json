@@ -2,11 +2,9 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["dom", "dom.iterable", "es2022"],
-    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -16,11 +14,7 @@
     "types": ["react", "react-dom", "node"],
 
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"]
     }
