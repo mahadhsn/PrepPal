@@ -4,7 +4,22 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'PrepPal',
-  description: 'Spot resourceful items in everyday spaces',
+  description: 'Disaster awareness and emergency-support assistant.',
+  openGraph: {
+    title: 'PrepPal',
+    description:
+      'Detect items and learn how to repurpose them for survival and first-aid.',
+    url: 'https://prep-pal-mu.vercel.app',
+    siteName: 'PrepPal',
+    images: [
+      {
+        url: '../../public/objects.png',
+        width: 1200,
+        height: 630,
+        alt: 'PrepPal Kitchen-Aid object detection view',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
