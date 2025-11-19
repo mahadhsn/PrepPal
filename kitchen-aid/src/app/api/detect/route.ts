@@ -78,7 +78,7 @@ function nms(items: BoxOut[], thr = 0.5) {
   return out
 }
 
-function polyToBox(vertices: { x?: number; y?: number }[]): NormBox {
+function polyToBox(vertices: { x?: number | null; y?: number | null }[]): NormBox {
   const xs = vertices.map(v => v.x ?? 0)
   const ys = vertices.map(v => v.y ?? 0)
   const x0 = Math.min(...xs), x1 = Math.max(...xs)
