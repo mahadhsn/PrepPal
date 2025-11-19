@@ -24,7 +24,7 @@ export default function SiteHeader() {
           variant="default"
         >
           <Link
-            href="https://example.com"
+            href="https://natural-disaster-map.vercel.app"
           >
             Interactive Global Map
           </Link>
