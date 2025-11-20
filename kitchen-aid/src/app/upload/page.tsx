@@ -130,7 +130,7 @@ export default function UploadPage() {
         {/* Upload card */}
         <Card>
           <CardHeader><CardTitle>Upload a photo</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-2">
             <div className="grid gap-2">
               <Label htmlFor="file">Image</Label>
               <Input
@@ -140,9 +140,15 @@ export default function UploadPage() {
                 onChange={e => e.target.files?.[0] && onFile(e.target.files[0])}
               />
             </div>
-            <Button onClick={detect} disabled={!file || busy}>
+            <div className='flex flex-col gap-2'>
+              <span className='text-[11px]'>
+                works best with small (*.JPEG)'s
+              </span>
+              <Button className="w-40 h-8"onClick={detect} disabled={!file || busy}>
               {busy ? 'Detecting…' : 'Detect first-aid items'}
-            </Button>
+              </Button>
+            </div>
+            
           </CardContent>
         </Card>
 
