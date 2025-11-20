@@ -7,14 +7,14 @@ PrepPal is a disaster awareness and emergency-support web application that helps
 
 <div align="center">
 
-### 🌍 Global Hazard Map  
+### 🌍 [Global Hazard Map](https://natural-disaster-map.vercel.app)  
 <img src="assets/globe.png" width="80%" alt="Disaster Map">
 
 *Shows real-time natural disasters, hazard radius, earthquake data, etc.*
 
 ---
 
-### 🧰 First-Aid Object Detection  
+### 🧰 [First-Aid Object Detection](https://prep-pal-mu.vercel.app)
 <img src="assets/objects.png" width="80%" alt="Object Detection">
 
 *AI-assisted detection of everyday items with survival & first-aid use cases.*
