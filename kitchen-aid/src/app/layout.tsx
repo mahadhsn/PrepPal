@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: 'PrepPal',
     images: [
       {
-        url: '../../public/objects.png',
+        url: '/objects.png',
         width: 1200,
         height: 630,
         alt: 'PrepPal Kitchen-Aid object detection view',
